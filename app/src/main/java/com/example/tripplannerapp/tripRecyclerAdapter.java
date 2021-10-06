@@ -9,20 +9,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 
 public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapter.TripHolder> {
     private ArrayList<Trip> tripList;
+    private OnClickListener listener;
 
-    public tripRecyclerAdapter(ArrayList<Trip> tripList) {
+    public tripRecyclerAdapter(ArrayList<Trip> tripList, OnClickListener listener) {
         this.tripList = tripList;
+        this.listener = listener;
     }
 
-    public class TripHolder extends RecyclerView.ViewHolder{
+
+    public class TripHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView Name;
         private TextView Desc;
         private TextView Start;
         private TextView End;
+
 
         public TripHolder(final View view){
             super(view);
@@ -30,8 +34,13 @@ public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapte
             Desc = view.findViewById(R.id.tripDesc);
             Start = view.findViewById(R.id.startDate);
             End = view.findViewById(R.id.endDate);
+            view.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            listener.onClick(v, getAdapterPosition());
+        }
     }
 
 
@@ -53,9 +62,14 @@ public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapte
         holder.Start.setText(start);
         holder.End.setText(end);
     }
-
     @Override
     public int getItemCount() {
         return tripList.size();
     }
+
+    public interface OnClickListener{
+        void onClick(View v, int position);
+    }
+
 }
+
