@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity{
             private void openAddNewTripActivity() {
                 Intent intent = new Intent(MainActivity.this, AddNewTripActivity.class);
                 AddNewTripActivityResultLauncher.launch(intent);
+                //startActivity(intent);
             }
         });
 
@@ -79,7 +80,6 @@ public class MainActivity extends AppCompatActivity{
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
     }
 
     private void setOnClickListner() {

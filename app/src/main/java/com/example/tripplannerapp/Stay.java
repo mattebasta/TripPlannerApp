@@ -1,5 +1,6 @@
 package com.example.tripplannerapp;
 
+//Todo: update the class to get the lat and long of the stay
 public class Stay {
     private String stayPlace;
     private String fromDate;

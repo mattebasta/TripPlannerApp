@@ -1,13 +1,10 @@
 package com.example.tripplannerapp;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,45 +14,39 @@ import android.widget.EditText;
 import java.util.Calendar;
 
 //Todo: add alert to notify the completion of all field when adding a new element to a recycler view
-public class AddNewTripActivity extends AppCompatActivity {
-
-    private DatePickerDialog startDatePickerDialog;
-    private DatePickerDialog endDatePickerDialog;
-    private Button startDateButton;
-    private Button endDateButton;
-    private Button saveTrip;
-    EditText TripName;
-    EditText TripDesc;
-
+public class AddNewStayActivity extends AppCompatActivity {
+    private DatePickerDialog fromDatePickerDialog;
+    private DatePickerDialog toDatePickerDialog;
+    private Button stayFromBtn;
+    private Button stayToBtn;
+    private Button saveNewStayBtn;
+    EditText editTextstayPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_new_trip);
+        setContentView(R.layout.activity_add_new_stay);
 
         initDatePicker();
-        TripDesc = findViewById(R.id.editTextTripDesc);
-        TripName = findViewById(R.id.editTextTripName);
-        startDateButton = findViewById(R.id.button2);
-        endDateButton = findViewById(R.id.button3);
-        startDateButton.setText(getTodayDate());
-        endDateButton.setText(getTodayDate());
+        editTextstayPlace = findViewById(R.id.editTextStayPlace);
+        stayFromBtn = findViewById(R.id.stayFromButton);
+        stayToBtn = findViewById(R.id.stayToButton);
+        saveNewStayBtn = findViewById(R.id.saveNewStayButton);
+        stayFromBtn.setText(getTodayDate());
+        stayToBtn.setText(getTodayDate());
 
-
-        saveTrip = findViewById(R.id.saveTripButton);
-
-        saveTrip.setOnClickListener(new View.OnClickListener() {
+        saveNewStayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent aNewTripIntent = new Intent();
-                aNewTripIntent.putExtra("TripName", TripName.getText().toString());
-                aNewTripIntent.putExtra("TripDesc", TripDesc.getText().toString());
-                aNewTripIntent.putExtra("StartDate", startDateButton.getText().toString());
-                aNewTripIntent.putExtra("EndDate", endDateButton.getText().toString());
-                setResult(78, aNewTripIntent);
-                AddNewTripActivity.super.onBackPressed();
+                Intent addNewStayIntent = new Intent();
+                addNewStayIntent.putExtra("StayPlace", editTextstayPlace.getText().toString());
+                addNewStayIntent.putExtra("StayFrom", stayFromBtn.getText().toString());
+                addNewStayIntent.putExtra("StayTo", stayToBtn.getText().toString());
+                setResult(80, addNewStayIntent);
+                AddNewStayActivity.super.onBackPressed();
             }
         });
+
     }
 
     private String getTodayDate() {
@@ -68,24 +59,25 @@ public class AddNewTripActivity extends AppCompatActivity {
     }
 
     private void initDatePicker() {
-        DatePickerDialog.OnDateSetListener startDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener fromDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                String startDate = makeDateString(dayOfMonth, month, year);
-                startDateButton.setText(startDate);
+                String fromStayDate = makeDateString(dayOfMonth, month, year);
+                stayFromBtn.setText(fromStayDate);
             }
-
         };
 
-        DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener toDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                String endDate = makeDateString(dayOfMonth, month, year);
-                endDateButton.setText(endDate);
+                String toStayDate = makeDateString(dayOfMonth, month, year);
+                stayToBtn.setText(toStayDate);
             }
         };
+
+
 
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
@@ -93,8 +85,9 @@ public class AddNewTripActivity extends AppCompatActivity {
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int style = AlertDialog.THEME_HOLO_DARK;
 
-        startDatePickerDialog = new DatePickerDialog(this, style, startDateSetListener, year, month, day);
-        endDatePickerDialog = new DatePickerDialog(this, style, endDateSetListener, year ,month, day);
+        fromDatePickerDialog = new DatePickerDialog(this, style, fromDateSetListener, year, month, day);
+        toDatePickerDialog = new DatePickerDialog(this, style, toDateSetListener, year, month, day);
+
     }
 
     private String makeDateString(int day, int month, int year){
@@ -129,10 +122,7 @@ public class AddNewTripActivity extends AppCompatActivity {
         return  "JAN";
     }
 
-    public void startOpenDatePicker(View view){
-        startDatePickerDialog.show();
-    }
-    public void endOpenDatePicker(View view){
-        endDatePickerDialog.show();
-    }
+    public void fromStayOpenDatePicker(View view){ fromDatePickerDialog.show(); }
+    public void toStayOpenDatePicker(View view){ toDatePickerDialog.show(); }
+
 }

@@ -1,5 +1,6 @@
 package com.example.tripplannerapp;
 
+//Todo: upgrade class to get and set lat and long of the shift
 public class Shift {
     private String departure;
     private String arrive;

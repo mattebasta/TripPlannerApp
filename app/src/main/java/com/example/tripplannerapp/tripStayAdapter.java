@@ -29,7 +29,7 @@ public class tripStayAdapter extends RecyclerView.Adapter<tripStayAdapter.StayHo
             super(itemView);
             stayPlace = itemView.findViewById(R.id.stayplace);
             stayFrom = itemView.findViewById(R.id.staysfrom);
-            stayTo = itemView.findViewById(R.id.staysfrom);
+            stayTo = itemView.findViewById(R.id.stayTo);
 
         }
     }

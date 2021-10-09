@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TripPlannerApp">
-        <activity android:name=".tripStageAdapter"></activity>
+        <activity android:name=".AddNewStayActivity"></activity>
+        <activity android:name=".AddNewShiftActivity" />
         <activity android:name=".tripDetailsActivity" />
         <activity android:name=".AddNewTripActivity" />
         <activity android:name=".MainActivity">
