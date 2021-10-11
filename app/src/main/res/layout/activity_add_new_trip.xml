@@ -18,7 +18,7 @@
         android:layout_marginRight="49dp"
         android:onClick="endOpenDatePicker"
         android:text="enddate"
-        app:backgroundTint="#EAA5A5"
+        app:backgroundTint="#1E88A3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/button2" />
@@ -111,7 +111,7 @@
         android:layout_marginRight="298dp"
         android:layout_marginBottom="20dp"
         android:text="Save"
-        app:backgroundTint="#EAA5A5"
+        app:backgroundTint="#1E88A3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -127,7 +127,7 @@
         android:layout_marginRight="50dp"
         android:onClick="startOpenDatePicker"
         android:text="startDate"
-        app:backgroundTint="#EAA5A5"
+        app:backgroundTint="#1E88A3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView4"

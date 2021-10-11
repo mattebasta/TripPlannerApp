@@ -65,6 +65,7 @@
         android:layout_marginRight="71dp"
         android:onClick="dateOfShiftOpenDatePicker"
         android:text="Shiftdate"
+        app:backgroundTint="#1E88A3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextArrive" />
 
@@ -78,6 +79,7 @@
         android:layout_marginRight="307dp"
         android:layout_marginBottom="16dp"
         android:text="Save"
+        app:backgroundTint="#1E88A3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
