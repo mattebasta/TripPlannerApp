@@ -4,9 +4,11 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,7 +55,9 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.tripRecyclerView);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        new ItemTouchHelper(mainActivityTouchHelperCallback).attachToRecyclerView(recyclerView);
         tripList = new ArrayList<>();
+        setAdapter();
 
 
         addNewTripBtn = (Button) findViewById(R.id.newTrip);
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity{
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void setOnClickListner() {
@@ -95,6 +100,19 @@ public class MainActivity extends AppCompatActivity{
             }
         };
     }
+
+    ItemTouchHelper.SimpleCallback mainActivityTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            tripList.remove(viewHolder.getAdapterPosition());
+            setAdapter();
+        }
+    };
 
 
 }

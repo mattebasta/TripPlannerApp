@@ -1,16 +1,21 @@
 package com.example.tripplannerapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 //Todo: add alert to notify the completion of all field when adding a new element to a recycler view
@@ -20,7 +25,11 @@ public class AddNewStayActivity extends AppCompatActivity {
     private Button stayFromBtn;
     private Button stayToBtn;
     private Button saveNewStayBtn;
+    private Button selectStayLocationBtn;
     EditText editTextstayPlace;
+    int PLACE_PICKER_REQUEST = 1;
+    TextView latAndLong;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,18 @@ public class AddNewStayActivity extends AppCompatActivity {
         saveNewStayBtn = findViewById(R.id.saveNewStayButton);
         stayFromBtn.setText(getTodayDate());
         stayToBtn.setText(getTodayDate());
+        latAndLong = findViewById(R.id.textView14);
+        selectStayLocationBtn = findViewById(R.id.setStayLocationBtn);
+
+        selectStayLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+
+
+        });
+
+
 
         saveNewStayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,11 +63,21 @@ public class AddNewStayActivity extends AppCompatActivity {
                 addNewStayIntent.putExtra("StayPlace", editTextstayPlace.getText().toString());
                 addNewStayIntent.putExtra("StayFrom", stayFromBtn.getText().toString());
                 addNewStayIntent.putExtra("StayTo", stayToBtn.getText().toString());
+                addNewStayIntent.putExtra("StayLatAndLong",latAndLong.getText());
                 setResult(80, addNewStayIntent);
                 AddNewStayActivity.super.onBackPressed();
             }
         });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+            }
+        }
     }
 
     private String getTodayDate() {
