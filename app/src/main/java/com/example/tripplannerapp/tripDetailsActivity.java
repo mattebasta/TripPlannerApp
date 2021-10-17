@@ -6,33 +6,36 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ActionBar;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-//Todo: Add Map and get all the long and lat of stay and shift
-//Todo: fix activity details UI
-//Todo: implement data persistance through sqlLite and rooms
+
+//Todo: implement data persistance through rooms
 public class tripDetailsActivity extends AppCompatActivity {
+    private StayViewModel stayViewModel;
+    private ShiftViewModel shiftViewModel;
+    public static final String EXTRA_TRIP_NAME = "com.example.tripplannerapp.EXTRA_TRIP_NAME";
+    public static final String EXTRA_TRIP_DESC = "com.example.tripplannerapp.EXTRA_TRIP_DESC";
+    public static final String EXTRA_TRIP_SDATE = "com.example.tripplannerapp.EXTRA_TRIP_SDATE";
+    public static final String EXTRA_TRIP_EDATE = "com.example.tripplannerapp.EXTRA_TRIP_EDATE";
+    public static final String EXTRA_TRIP_ID = "com.example.tripplannerapp.EXTRA_TRIP_ID";
 
     private TextView theTripName;
     private TextView theTripDesc;
@@ -43,8 +46,8 @@ public class tripDetailsActivity extends AppCompatActivity {
     private RecyclerView stayRecyclerView;
     private RecyclerView shiftRecyclerView;
     private ImageButton toMapBtn;
-    ArrayList<Stay> stayArrayList;
-    ArrayList<Shift> shiftArrayList;
+    List<Stay> stayList;
+    List<Shift> shiftList;
 
     ActivityResultLauncher<Intent> GetNewShiftResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -57,8 +60,8 @@ public class tripDetailsActivity extends AppCompatActivity {
                             String departurePlace = intent.getStringExtra("Departure");
                             String arrivePlace = intent.getStringExtra("Arrive");
                             String dateOfShift = intent.getStringExtra("DateOfShift");
-                            shiftArrayList.add(new Shift(departurePlace,arrivePlace,dateOfShift));
-                            setShiftAdapter();
+                            shiftList.add(new Shift(departurePlace,arrivePlace,dateOfShift));
+                            shiftViewModel.insert(new Shift(departurePlace,arrivePlace,dateOfShift));
                         }
                     }
                 }
@@ -75,11 +78,8 @@ public class tripDetailsActivity extends AppCompatActivity {
                             String stayPlace = intent.getStringExtra("StayPlace");
                             String fromStayDate = intent.getStringExtra("StayFrom");
                             String toStayDate = intent.getStringExtra("StayTo");
-                            String stayLatLng = intent.getStringExtra("StayLatAndLong");
-
-
-                            stayArrayList.add(new Stay(stayPlace, fromStayDate, toStayDate));
-                            setStayAdapter();
+                            stayList.add(new Stay(stayPlace, fromStayDate, toStayDate));
+                            stayViewModel.insert(new Stay(stayPlace,fromStayDate,toStayDate));
                         }
                     }
                 }
@@ -93,15 +93,69 @@ public class tripDetailsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //stay recyclerview management
         stayRecyclerView = findViewById(R.id.stayRecyclerView);
+        stayRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        stayRecyclerView.setHasFixedSize(true);
         stayRecyclerView.addItemDecoration(new DividerItemDecoration(stayRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        shiftRecyclerView = findViewById(R.id.shiftRecyclerView);
-        shiftRecyclerView.addItemDecoration(new DividerItemDecoration(shiftRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        stayArrayList = new ArrayList<>();
-        shiftArrayList = new ArrayList<>();
 
-        new ItemTouchHelper(stayTouchHelperCallback).attachToRecyclerView(stayRecyclerView);
-        new ItemTouchHelper(shiftTouchHelperCallback).attachToRecyclerView(shiftRecyclerView);
+        stayList = new ArrayList<Stay>();
+
+        final tripStayAdapter stayAdapter = new tripStayAdapter();
+        stayRecyclerView.setAdapter(stayAdapter);
+
+        stayViewModel = ViewModelProviders.of(this).get(StayViewModel.class);
+        stayViewModel.getAllStay().observe(this, new Observer<List<Stay>>() {
+            @Override
+            public void onChanged(List<Stay> stayList) {
+                stayAdapter.setStayList(stayList);
+                stayAdapter.notifyDataSetChanged();
+            }
+        });
+        //stay recyclerview item touch helper
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                stayViewModel.delete(stayAdapter.getStayAt(viewHolder.getAdapterPosition()));
+            }
+        }).attachToRecyclerView(stayRecyclerView);
+
+        //shift recycler view management
+        shiftRecyclerView = findViewById(R.id.shiftRecyclerView);
+        shiftRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        shiftRecyclerView.setHasFixedSize(true);
+        shiftRecyclerView.addItemDecoration(new DividerItemDecoration(shiftRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+
+        shiftList = new ArrayList<Shift>();
+
+        final tripShiftAdapter shiftAdapter = new tripShiftAdapter();
+        shiftRecyclerView.setAdapter(shiftAdapter);
+
+        shiftViewModel = ViewModelProviders.of(this).get(ShiftViewModel.class);
+        shiftViewModel.getAllShift().observe(this, new Observer<List<Shift>>() {
+            @Override
+            public void onChanged(List<Shift> shiftList) {
+                shiftAdapter.setShiftList(shiftList);
+                shiftAdapter.notifyDataSetChanged();
+            }
+        });
+        //shift item touch helper
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                shiftViewModel.delete(shiftAdapter.getShiftAt(viewHolder.getAdapterPosition()));
+            }
+        }).attachToRecyclerView(shiftRecyclerView);
 
 
         theTripName = findViewById(R.id.theTripName);
@@ -109,18 +163,14 @@ public class tripDetailsActivity extends AppCompatActivity {
         theTripSDate = findViewById(R.id.theTripStart);
         theTripEDate = findViewById(R.id.theTripEnd);
 
-        stayArrayList.add(new Stay("Roma","qaaa","aaaa"));
-        setStayAdapter();
-        shiftArrayList.add(new Shift("Roma","qaaa","aaaa"));
-        setShiftAdapter();
 
 
         Bundle content = getIntent().getExtras();
         if (content != null){
-            theTripName.setText(content.getString("theTripName"));
-            theTripDesc.setText(content.getString("theTripDesc"));
-            theTripSDate.setText(content.getString("theTripSDate"));
-            theTripEDate.setText(content.getString("theTripEDate"));
+            theTripName.setText(content.getString(EXTRA_TRIP_NAME));
+            theTripDesc.setText(content.getString(EXTRA_TRIP_DESC));
+            theTripSDate.setText(content.getString(EXTRA_TRIP_SDATE));
+            theTripEDate.setText(content.getString(EXTRA_TRIP_EDATE));
         }
 
         addNewShiftBtn = findViewById(R.id.addNewShift);
@@ -161,52 +211,6 @@ public class tripDetailsActivity extends AppCompatActivity {
                 startActivity(mapIntent);
             }
         });
-
     }
-
-    private void setStayAdapter() {
-        tripStayAdapter stayAdapter = new tripStayAdapter(stayArrayList);
-        RecyclerView.LayoutManager stayLayoutManager = new LinearLayoutManager(getApplicationContext());
-        stayRecyclerView.setLayoutManager(stayLayoutManager);
-        stayRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        stayRecyclerView.setAdapter(stayAdapter);
-        stayAdapter.notifyDataSetChanged();
-    }
-
-    private void setShiftAdapter() {
-        tripShiftAdapter shiftAdapter = new tripShiftAdapter(shiftArrayList);
-        RecyclerView.LayoutManager shiftLayoutManager = new LinearLayoutManager(getApplicationContext());
-        shiftRecyclerView.setLayoutManager(shiftLayoutManager);
-        shiftRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        shiftRecyclerView.setAdapter(shiftAdapter);
-        shiftAdapter.notifyDataSetChanged();
-    }
-
-
-    ItemTouchHelper.SimpleCallback stayTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            stayArrayList.remove(viewHolder.getAdapterPosition());
-            setStayAdapter();
-        }
-    };
-
-    ItemTouchHelper.SimpleCallback shiftTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            shiftArrayList.remove(viewHolder.getAdapterPosition());
-            setShiftAdapter();
-        }
-    };
 
 }

@@ -1,12 +1,29 @@
 package com.example.tripplannerapp;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class Trip {
 
+@Entity(tableName = "Trip")
+public class Trip implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int ID;
+
+    @ColumnInfo(name = "TheTripName")
     private String tripName;
+
+    @ColumnInfo(name = "TheTripDesc")
     private String tripDesc;
+
+    @ColumnInfo(name = "TheTripStart")
     private String startDate;
+
+    @ColumnInfo(name = "TheTripEnd")
     private String endDate;
 
     public Trip(String tripName, String tripDesc, String startDate, String endDate) {
@@ -47,4 +64,13 @@ public class Trip {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
 }

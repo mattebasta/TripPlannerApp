@@ -6,6 +6,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -21,12 +23,18 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * TODO: permettere la modifica del viaggio.
+ * TODO: collega le tabelle con una query in modo da far vedere gli stage nel rispettivo viaggio
+ */
 public class MainActivity extends AppCompatActivity{
+    private TripViewModel tripViewModel;
 
     private Button addNewTripBtn;
     private RecyclerView recyclerView;
-    private ArrayList<Trip> tripList;
+    private List<Trip> tripList;
     private tripRecyclerAdapter.OnClickListener listener;
 
 
@@ -43,7 +51,7 @@ public class MainActivity extends AppCompatActivity{
                             String sDate = intent.getStringExtra("StartDate");
                             String eDate = intent.getStringExtra("EndDate");
                             tripList.add(new Trip(name, desc, sDate, eDate));
-                            setAdapter();
+                            tripViewModel.insert(new Trip(name,desc,sDate,eDate));
                         }
                     }
                 }
@@ -53,12 +61,54 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerView = findViewById(R.id.tripRecyclerView);
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        new ItemTouchHelper(mainActivityTouchHelperCallback).attachToRecyclerView(recyclerView);
-        tripList = new ArrayList<>();
-        setAdapter();
 
+        recyclerView = findViewById(R.id.tripRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+
+        tripList = new ArrayList<Trip>();
+
+        final tripRecyclerAdapter adapter = new tripRecyclerAdapter();
+        recyclerView.setAdapter(adapter);
+
+        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
+        tripViewModel.getAllTrip().observe(this, new Observer<List<Trip>>() {
+            @Override
+            public void onChanged(List<Trip> tripList) {
+                adapter.setTripList(tripList);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT
+        | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                tripViewModel.delete(adapter.getTripAt(viewHolder.getAdapterPosition()));
+
+            }
+        }).attachToRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener(new tripRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Trip trip) {
+                Intent intent = new Intent(getApplicationContext(), tripDetailsActivity.class);
+                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_NAME, trip.getTripName());
+                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_DESC, trip.getTripDesc());
+                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_SDATE, trip.getStartDate());
+                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_EDATE, trip.getEndDate());
+                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_ID, trip.getID());
+                startActivity(intent);
+            }
+        });
 
         addNewTripBtn = (Button) findViewById(R.id.newTrip);
 
@@ -77,42 +127,15 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    private void setAdapter() {
-        setOnClickListner();
-        tripRecyclerAdapter adapter = new tripRecyclerAdapter(tripList, listener);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-    }
-
     private void setOnClickListner() {
         listener = new tripRecyclerAdapter.OnClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Intent intent = new Intent(getApplicationContext(), tripDetailsActivity.class);
-                intent.putExtra("theTripName", tripList.get(position).getTripName());
-                intent.putExtra("theTripDesc", tripList.get(position).getTripDesc());
-                intent.putExtra("theTripSDate", tripList.get(position).getStartDate());
-                intent.putExtra("theTripEDate", tripList.get(position).getEndDate());
-                startActivity(intent);
+
+
             }
         };
     }
-
-    ItemTouchHelper.SimpleCallback mainActivityTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            tripList.remove(viewHolder.getAdapterPosition());
-            setAdapter();
-        }
-    };
 
 
 }

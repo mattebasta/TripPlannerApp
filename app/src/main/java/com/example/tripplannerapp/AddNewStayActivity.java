@@ -1,21 +1,24 @@
 package com.example.tripplannerapp;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import java.util.Arrays;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
+
 import java.util.Calendar;
 
 //Todo: add alert to notify the completion of all field when adding a new element to a recycler view
@@ -25,10 +28,9 @@ public class AddNewStayActivity extends AppCompatActivity {
     private Button stayFromBtn;
     private Button stayToBtn;
     private Button saveNewStayBtn;
-    private Button selectStayLocationBtn;
-    EditText editTextstayPlace;
-    int PLACE_PICKER_REQUEST = 1;
-    TextView latAndLong;
+    EditText editTextStayPlace;
+    int REQUEST_STAY_AUTOCOMPLETE = 1;
+
 
 
     @Override
@@ -37,47 +39,48 @@ public class AddNewStayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_stay);
 
         initDatePicker();
-        editTextstayPlace = findViewById(R.id.editTextStayPlace);
+        editTextStayPlace = findViewById(R.id.editTextStayPlace);
         stayFromBtn = findViewById(R.id.stayFromButton);
         stayToBtn = findViewById(R.id.stayToButton);
         saveNewStayBtn = findViewById(R.id.saveNewStayButton);
         stayFromBtn.setText(getTodayDate());
         stayToBtn.setText(getTodayDate());
-        latAndLong = findViewById(R.id.textView14);
-        selectStayLocationBtn = findViewById(R.id.setStayLocationBtn);
 
-        selectStayLocationBtn.setOnClickListener(new View.OnClickListener() {
+        editTextStayPlace.setInputType(InputType.TYPE_NULL);
+        editTextStayPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent placeSelectionIntent = new PlaceAutocomplete.IntentBuilder()
+                        .accessToken(getString(R.string.access_token))
+                        .placeOptions(PlaceOptions.builder().backgroundColor(Color.parseColor("#ffffff")).build()).build(AddNewStayActivity.this);
+                startActivityForResult(placeSelectionIntent, REQUEST_STAY_AUTOCOMPLETE);
             }
-
-
         });
-
 
 
         saveNewStayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addNewStayIntent = new Intent();
-                addNewStayIntent.putExtra("StayPlace", editTextstayPlace.getText().toString());
+                addNewStayIntent.putExtra("StayPlace", editTextStayPlace.getText().toString());
                 addNewStayIntent.putExtra("StayFrom", stayFromBtn.getText().toString());
                 addNewStayIntent.putExtra("StayTo", stayToBtn.getText().toString());
-                addNewStayIntent.putExtra("StayLatAndLong",latAndLong.getText());
                 setResult(80, addNewStayIntent);
                 AddNewStayActivity.super.onBackPressed();
             }
         });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-
-            }
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_STAY_AUTOCOMPLETE){
+            CarmenFeature feature = PlaceAutocomplete.getPlace(data);
+//            Toast.makeText(this, feature.text(),Toast.LENGTH_LONG).show();
+            editTextStayPlace.setText(feature.text());
         }
+
     }
 
     private String getTodayDate() {

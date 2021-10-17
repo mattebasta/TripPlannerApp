@@ -9,15 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class tripStayAdapter extends RecyclerView.Adapter<tripStayAdapter.StayHolder> {
-    private ArrayList<Stay> stayList;
+    private List<Stay> stayList = new ArrayList<>();
+    private OnItemClickListener stayListener;
 
-    public tripStayAdapter(ArrayList<Stay> stayList){
-        this.stayList = stayList;
-
-    }
 
     public class StayHolder extends RecyclerView.ViewHolder {
         private TextView stayPlace;
@@ -31,6 +29,15 @@ public class tripStayAdapter extends RecyclerView.Adapter<tripStayAdapter.StayHo
             stayFrom = itemView.findViewById(R.id.staysfrom);
             stayTo = itemView.findViewById(R.id.stayTo);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (stayListener != null && position != RecyclerView.NO_POSITION){
+                        stayListener.onItemClick(stayList.get(position));
+                    }
+                }
+            });
         }
     }
 
@@ -44,12 +51,18 @@ public class tripStayAdapter extends RecyclerView.Adapter<tripStayAdapter.StayHo
 
     @Override
     public void onBindViewHolder(@NonNull StayHolder holder, int position) {
-        String stayPlace = stayList.get(position).getStayPlace();
-        String stayFrom = stayList.get(position).getFromDate();
-        String stayTo = stayList.get(position).getToDate();
-        holder.stayPlace.setText(stayPlace);
-        holder.stayFrom.setText(stayFrom);
-        holder.stayTo.setText(stayTo);
+        Stay currentStay = stayList.get(position);
+        holder.stayPlace.setText(currentStay.getStayPlace());
+        holder.stayFrom.setText(currentStay.getFromDate());
+        holder.stayTo.setText(currentStay.getToDate());
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(Stay stay);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.stayListener = listener;
     }
 
     @Override
@@ -57,4 +70,16 @@ public class tripStayAdapter extends RecyclerView.Adapter<tripStayAdapter.StayHo
         return stayList.size();
     }
 
+    public void setStayList(List<Stay> stayList){
+        this.stayList = stayList;
+        notifyDataSetChanged();
+    }
+
+    public Stay getStayAt(int position){
+        return stayList.get(position);
+    }
+
+    public interface OnclickListener{
+        void onClick(View v, int position);
+    }
 }

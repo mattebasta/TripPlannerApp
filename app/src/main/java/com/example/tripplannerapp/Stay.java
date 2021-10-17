@@ -1,9 +1,25 @@
 package com.example.tripplannerapp;
 
-//Todo: update the class to get the lat and long of the stay
-public class Stay {
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
+
+@Entity(tableName = "Stay")
+public class Stay implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int StayID;
+
+    @ColumnInfo(name = "StayPlace")
     private String stayPlace;
+
+    @ColumnInfo(name = "StayFromDate")
     private String fromDate;
+
+    @ColumnInfo(name = "StayToDate")
     private String toDate;
 
     public Stay(String stayPlace, String fromDate, String toDate){
@@ -34,5 +50,13 @@ public class Stay {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    public int getStayID() {
+        return StayID;
+    }
+
+    public void setStayID(int stayID) {
+        StayID = stayID;
     }
 }

@@ -1,9 +1,25 @@
 package com.example.tripplannerapp;
 
-//Todo: upgrade class to get and set lat and long of the shift
-public class Shift {
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
+
+@Entity(tableName = "Shift")
+public class Shift implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int ShiftID;
+
+    @ColumnInfo(name = "ShiftDeparture")
     private String departure;
+
+    @ColumnInfo(name = "ShiftArrive")
     private String arrive;
+
+    @ColumnInfo(name = "ShiftDate")
     private String dateOfShift;
 
     public Shift(String departure, String arrive, String dateOfShift) {
@@ -34,6 +50,14 @@ public class Shift {
 
     public void setDateOfShift(String dateOfShift) {
         this.dateOfShift = dateOfShift;
+    }
+
+    public int getShiftID() {
+        return ShiftID;
+    }
+
+    public void setShiftID(int shiftID) {
+        ShiftID = shiftID;
     }
 
 }

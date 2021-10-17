@@ -16,7 +16,7 @@
         android:layout_marginEnd="17dp"
         android:layout_marginRight="17dp"
         android:ems="10"
-        android:hint="Place of the stay"
+        android:hint="Name of the stay"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,37 +94,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="173dp"
-        android:layout_marginLeft="173dp"
-        android:layout_marginTop="54dp"
-        android:layout_marginEnd="173dp"
-        android:layout_marginRight="173dp"
-        android:layout_marginBottom="236dp"
-        android:text="TextView"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setStayLocationBtn" />
-
-    <Button
-        android:id="@+id/setStayLocationBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="121dp"
-        android:layout_marginLeft="121dp"
-        android:layout_marginTop="67dp"
-        android:layout_marginEnd="120dp"
-        android:layout_marginRight="120dp"
-        android:text="Select Location"
-        app:backgroundTint="#1E88A3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stayToButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
