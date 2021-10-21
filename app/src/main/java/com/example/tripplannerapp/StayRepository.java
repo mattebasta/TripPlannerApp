@@ -8,16 +8,21 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Update;
 
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import java.util.List;
 
 public class StayRepository {
     private StayDao stayDao;
     private LiveData<List<Stay>> allStay;
+    private LiveData<List<StayDao.stayCoordinates>> stayCoordinates;
 
     public StayRepository(Application application){
         RoomDB database = RoomDB.getInstance(application);
         stayDao = database.stayDao();
         allStay = stayDao.getAllStay();
+        stayCoordinates = stayDao.getStayCoordinates();
     }
 
     public void insert(Stay stay){new InsertStayAsyncTask(stayDao).execute(stay);}
@@ -27,6 +32,8 @@ public class StayRepository {
     public void delete(Stay stay){new DeleteStayAsyncTask(stayDao).execute(stay);}
 
     public void deleteAll(){new DeleteAllStayAsyncTask(stayDao).execute();}
+
+    public LiveData<List<StayDao.stayCoordinates>> getStayCoordinates(){return stayCoordinates;}
 
     public LiveData<List<Stay>> getAllStay(){ return allStay;}
 
@@ -85,6 +92,4 @@ public class StayRepository {
             return null;
         }
     }
-
-
 }

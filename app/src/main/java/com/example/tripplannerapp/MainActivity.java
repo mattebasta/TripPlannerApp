@@ -25,18 +25,15 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO: permettere la modifica del viaggio.
- * TODO: collega le tabelle con una query in modo da far vedere gli stage nel rispettivo viaggio
- */
+
+
+//TODO: collega le tabelle con una query in modo da far vedere gli stage nel rispettivo viaggio
+
 public class MainActivity extends AppCompatActivity{
     private TripViewModel tripViewModel;
-
     private Button addNewTripBtn;
     private RecyclerView recyclerView;
     private List<Trip> tripList;
-    private tripRecyclerAdapter.OnClickListener listener;
-
 
     ActivityResultLauncher<Intent> AddNewTripActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -57,8 +54,27 @@ public class MainActivity extends AppCompatActivity{
                 }
             });
 
+    ActivityResultLauncher<Intent> EditTripActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == 42){
+                        Intent intent = result.getData();
+                        if (intent != null){
+                            String updateName = intent.getStringExtra("updateTripName");
+                            String updateDesc = intent.getStringExtra("updateTripDesc");
+                            String updateSDate = intent.getStringExtra("updateTripSDate");
+                            String updateEDate = intent.getStringExtra("updateTripEDate");
+                            Log.d("TAG__________", "onActivityResult: " + updateName + " " + updateDesc + " " + updateSDate + " " + updateEDate);
+                            tripViewModel.update(new Trip(updateName, updateDesc, updateSDate, updateEDate));
+                        }
+                    }
+                }
+            });
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -105,13 +121,23 @@ public class MainActivity extends AppCompatActivity{
                 intent.putExtra(tripDetailsActivity.EXTRA_TRIP_DESC, trip.getTripDesc());
                 intent.putExtra(tripDetailsActivity.EXTRA_TRIP_SDATE, trip.getStartDate());
                 intent.putExtra(tripDetailsActivity.EXTRA_TRIP_EDATE, trip.getEndDate());
-                intent.putExtra(tripDetailsActivity.EXTRA_TRIP_ID, trip.getID());
                 startActivity(intent);
             }
         });
 
-        addNewTripBtn = (Button) findViewById(R.id.newTrip);
+        adapter.setOnItemLongClickListener(new tripRecyclerAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClickListener(Trip trip) {
+                Intent intent = new Intent(MainActivity.this, EditTripActivity.class);
+                intent.putExtra(EditTripActivity.EXTRA_TRIP_NAME, trip.getTripName());
+                intent.putExtra(EditTripActivity.EXTRA_TRIP_DESC, trip.getTripDesc());
+                intent.putExtra(EditTripActivity.EXTRA_TRIP_SDATE, trip.getStartDate());
+                intent.putExtra(EditTripActivity.EXTRA_TRIP_EDATE, trip.getEndDate());
+                EditTripActivityResultLauncher.launch(intent);
+            }
+        });
 
+        addNewTripBtn = findViewById(R.id.newTrip);
         addNewTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,21 +147,8 @@ public class MainActivity extends AppCompatActivity{
             private void openAddNewTripActivity() {
                 Intent intent = new Intent(MainActivity.this, AddNewTripActivity.class);
                 AddNewTripActivityResultLauncher.launch(intent);
-                //startActivity(intent);
             }
         });
 
     }
-
-    private void setOnClickListner() {
-        listener = new tripRecyclerAdapter.OnClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-
-
-            }
-        };
-    }
-
-
 }

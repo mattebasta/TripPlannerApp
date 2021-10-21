@@ -1,5 +1,6 @@
 package com.example.tripplannerapp;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,10 +12,9 @@ import java.util.Date;
 @Entity(tableName = "Trip")
 public class Trip implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    private int ID;
 
-    @ColumnInfo(name = "TheTripName")
+    @NonNull
+    @PrimaryKey
     private String tripName;
 
     @ColumnInfo(name = "TheTripDesc")
@@ -65,12 +65,5 @@ public class Trip implements Serializable {
         this.endDate = endDate;
     }
 
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
 
 }

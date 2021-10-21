@@ -4,14 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/TripPlannerApp/app/src/main/res/drawable/search_bar_bg.xml" value="0.3828125" />
-        <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_add_new_shift.xml" value="0.1" />
+        <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_add_new_shift.xml" value="0.33" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_add_new_stay.xml" value="0.33" />
+        <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_edit_trip.xml" value="0.33" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_map_map_box.xml" value="0.36666666666666664" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_maps.xml" value="0.36666666666666664" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_stay_map_selection.xml" value="0.36666666666666664" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/activity_trip_details.xml" value="0.33016304347826086" />
-        <entry key="..\:/TripPlannerApp/app/src/main/res/layout/trip_item_list.xml" value="0.29393115942028986" />
+        <entry key="..\:/TripPlannerApp/app/src/main/res/layout/trip_item_list.xml" value="0.5" />
         <entry key="..\:/TripPlannerApp/app/src/main/res/layout/trip_shift_item_list.xml" value="0.36666666666666664" />
       </map>
     </option>

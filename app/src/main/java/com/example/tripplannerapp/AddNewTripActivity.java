@@ -18,7 +18,6 @@ import java.util.Calendar;
 
 //Todo: add alert to notify the completion of all field when adding a new element to a recycler view
 public class AddNewTripActivity extends AppCompatActivity {
-
     private DatePickerDialog startDatePickerDialog;
     private DatePickerDialog endDatePickerDialog;
     private Button startDateButton;
@@ -41,9 +40,7 @@ public class AddNewTripActivity extends AppCompatActivity {
         startDateButton.setText(getTodayDate());
         endDateButton.setText(getTodayDate());
 
-
         saveTrip = findViewById(R.id.saveTripButton);
-
         saveTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,6 +49,7 @@ public class AddNewTripActivity extends AppCompatActivity {
                 aNewTripIntent.putExtra("TripDesc", TripDesc.getText().toString());
                 aNewTripIntent.putExtra("StartDate", startDateButton.getText().toString());
                 aNewTripIntent.putExtra("EndDate", endDateButton.getText().toString());
+//                if()
                 setResult(78, aNewTripIntent);
                 AddNewTripActivity.super.onBackPressed();
             }
@@ -94,7 +92,9 @@ public class AddNewTripActivity extends AppCompatActivity {
         int style = AlertDialog.THEME_HOLO_DARK;
 
         startDatePickerDialog = new DatePickerDialog(this, style, startDateSetListener, year, month, day);
+        startDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
         endDatePickerDialog = new DatePickerDialog(this, style, endDateSetListener, year ,month, day);
+        endDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
     }
 
     private String makeDateString(int day, int month, int year){

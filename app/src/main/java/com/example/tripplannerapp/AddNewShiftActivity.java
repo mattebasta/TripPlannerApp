@@ -28,6 +28,10 @@ public class AddNewShiftActivity extends AppCompatActivity {
     private DatePickerDialog dateOfShiftPickerDialog;
     EditText editTextDeparture;
     EditText editTextArrive;
+    TextView shLngDepTV;
+    TextView shLatDepTV;
+    TextView shLngArrTV;
+    TextView shLatArrTV;
     private Button shiftDateBtn;
     private Button newShiftBtn;
     int REQUEST_ARRIVE_AUTO_COMPLETE = 2; //arrive
@@ -39,6 +43,10 @@ public class AddNewShiftActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_shift);
 
         initDatePicker();
+        shLngDepTV = findViewById(R.id.shiftLngDepartureTV);
+        shLatDepTV = findViewById(R.id.shiftLatDepartureTV);
+        shLngArrTV = findViewById(R.id.shiftLngArriveTV);
+        shLatArrTV = findViewById(R.id.shiftLatArriveTV);
         editTextArrive = findViewById(R.id.editTextArrive);
         editTextDeparture = findViewById(R.id.editTextDeparture);
         shiftDateBtn = findViewById(R.id.dateOfShift);
@@ -76,6 +84,10 @@ public class AddNewShiftActivity extends AppCompatActivity {
                 addNewShiftIntent.putExtra("Departure",editTextDeparture.getText().toString());
                 addNewShiftIntent.putExtra("Arrive",editTextArrive.getText().toString());
                 addNewShiftIntent.putExtra("DateOfShift",shiftDateBtn.getText().toString());
+                addNewShiftIntent.putExtra("shLatDep", shLatDepTV.getText());
+                addNewShiftIntent.putExtra("shLngDep", shLngDepTV.getText());
+                addNewShiftIntent.putExtra("shLatArr", shLatArrTV.getText());
+                addNewShiftIntent.putExtra("shLngArr", shLngArrTV.getText());
                 setResult(79,addNewShiftIntent);
                 AddNewShiftActivity.super.onBackPressed();
             }
@@ -88,13 +100,21 @@ public class AddNewShiftActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_DEPARTURE_AUTO_COMPLETE){
             CarmenFeature depFeature = PlaceAutocomplete.getPlace(data);
-            Toast.makeText(this, depFeature.text(),Toast.LENGTH_LONG).show();
+            Double shiftDepLng = depFeature.center().longitude();
+            Double shiftDepLat = depFeature.center().latitude();
+//            Toast.makeText(this, depFeature.text(),Toast.LENGTH_LONG).show();
             editTextDeparture.setText(depFeature.text());
+            shLngDepTV.setText(Double.toString(shiftDepLng));
+            shLatDepTV.setText(Double.toString(shiftDepLat));
         }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ARRIVE_AUTO_COMPLETE){
             CarmenFeature arrFeature = PlaceAutocomplete.getPlace(data);
-            Toast.makeText(this, arrFeature.text(), Toast.LENGTH_LONG).show();
+            Double shiftArrLng = arrFeature.center().longitude();
+            Double shiftArrLat = arrFeature.center().latitude();
+//            Toast.makeText(this, arrFeature.text(), Toast.LENGTH_LONG).show();
             editTextArrive.setText(arrFeature.text());
+            shLngArrTV.setText(Double.toString(shiftArrLng));
+            shLatArrTV.setText(Double.toString(shiftArrLat));
         }
     }
 
@@ -124,6 +144,7 @@ public class AddNewShiftActivity extends AppCompatActivity {
         int style = AlertDialog.THEME_HOLO_DARK;
 
         dateOfShiftPickerDialog = new DatePickerDialog(this, style, dateOfShiftListener, year, month, day);
+        dateOfShiftPickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
     }
 
     private String makeDateString(int day, int month, int year){

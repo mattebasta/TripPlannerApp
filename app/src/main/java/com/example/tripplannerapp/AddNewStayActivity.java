@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
@@ -28,6 +29,8 @@ public class AddNewStayActivity extends AppCompatActivity {
     private Button stayFromBtn;
     private Button stayToBtn;
     private Button saveNewStayBtn;
+    TextView StayLngTextView;
+    TextView StayLatTextView;
     EditText editTextStayPlace;
     int REQUEST_STAY_AUTOCOMPLETE = 1;
 
@@ -39,6 +42,8 @@ public class AddNewStayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_stay);
 
         initDatePicker();
+        StayLngTextView = findViewById(R.id.StayLngTextView);
+        StayLatTextView = findViewById(R.id.StayLatTextView);
         editTextStayPlace = findViewById(R.id.editTextStayPlace);
         stayFromBtn = findViewById(R.id.stayFromButton);
         stayToBtn = findViewById(R.id.stayToButton);
@@ -65,6 +70,8 @@ public class AddNewStayActivity extends AppCompatActivity {
                 addNewStayIntent.putExtra("StayPlace", editTextStayPlace.getText().toString());
                 addNewStayIntent.putExtra("StayFrom", stayFromBtn.getText().toString());
                 addNewStayIntent.putExtra("StayTo", stayToBtn.getText().toString());
+                addNewStayIntent.putExtra("StayLng", StayLngTextView.getText());
+                addNewStayIntent.putExtra("StayLat", StayLatTextView.getText());
                 setResult(80, addNewStayIntent);
                 AddNewStayActivity.super.onBackPressed();
             }
@@ -77,8 +84,14 @@ public class AddNewStayActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_STAY_AUTOCOMPLETE){
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
-//            Toast.makeText(this, feature.text(),Toast.LENGTH_LONG).show();
+            double stayLng = feature.center().longitude();
+            double stayLat = feature.center().latitude();
+
+//            Log.d("TAG____", "onActivityResult: " + PlaceAutocomplete.getPlace(data).center() + "Lat: " + stayLat + "Lng: " + stayLng);
             editTextStayPlace.setText(feature.text());
+            StayLngTextView.setText(Double.toString(stayLng));
+            StayLatTextView.setText(Double.toString(stayLat));
+
         }
 
     }
@@ -120,7 +133,9 @@ public class AddNewStayActivity extends AppCompatActivity {
         int style = AlertDialog.THEME_HOLO_DARK;
 
         fromDatePickerDialog = new DatePickerDialog(this, style, fromDateSetListener, year, month, day);
+        fromDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
         toDatePickerDialog = new DatePickerDialog(this, style, toDateSetListener, year, month, day);
+        toDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
 
     }
 

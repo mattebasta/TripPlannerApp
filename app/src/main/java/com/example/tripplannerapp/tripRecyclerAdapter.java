@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,9 @@ import java.util.List;
 public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapter.TripHolder> {
     private List<Trip> tripList = new ArrayList<>();
     private OnItemClickListener listener;
+    private OnItemLongClickListener longClickListener;
+
+
 
 
     public class TripHolder extends RecyclerView.ViewHolder{
@@ -42,6 +46,19 @@ public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapte
 
                 }
             });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = getAdapterPosition();
+                    if (longClickListener != null && position != RecyclerView.NO_POSITION){
+                        longClickListener.onItemLongClickListener(tripList.get(position));
+                    }
+                    return false;
+                }
+            });
+
+
         }
     }
 
@@ -70,6 +87,13 @@ public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapte
         this.listener = listener;
     }
 
+    public interface OnItemLongClickListener{
+        void onItemLongClickListener(Trip trip);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener){
+        this.longClickListener = listener;
+    }
 
     @Override
     public int getItemCount() {
@@ -83,10 +107,6 @@ public class tripRecyclerAdapter extends RecyclerView.Adapter<tripRecyclerAdapte
 
     public Trip getTripAt(int position){
         return tripList.get(position);
-    }
-
-    public interface OnClickListener{
-        void onClick(View v, int position);
     }
 
 }

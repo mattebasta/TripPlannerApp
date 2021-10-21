@@ -22,10 +22,18 @@ public class Stay implements Serializable {
     @ColumnInfo(name = "StayToDate")
     private String toDate;
 
-    public Stay(String stayPlace, String fromDate, String toDate){
+    @ColumnInfo(name = "StayLongitude")
+    private Double stayLongitude;
+
+    @ColumnInfo(name = "StayLatitude")
+    private Double stayLatitude;
+
+    public Stay(String stayPlace, String fromDate, String toDate, Double stayLongitude, Double stayLatitude){
         this.stayPlace = stayPlace;
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.stayLongitude = stayLongitude;
+        this.stayLatitude = stayLatitude;
     }
 
     public String getStayPlace() {
@@ -58,5 +66,21 @@ public class Stay implements Serializable {
 
     public void setStayID(int stayID) {
         StayID = stayID;
+    }
+
+    public Double getStayLongitude() {
+        return stayLongitude;
+    }
+
+    public void setStayLongitude(Double stayLongitude) {
+        this.stayLongitude = stayLongitude;
+    }
+
+    public Double getStayLatitude() {
+        return stayLatitude;
+    }
+
+    public void setStayLatitude(Double stayLatitude) {
+        this.stayLatitude = stayLatitude;
     }
 }

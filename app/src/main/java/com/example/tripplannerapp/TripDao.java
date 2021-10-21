@@ -31,6 +31,6 @@ public interface TripDao {
     void update(Trip trip);
 
     //getAll
-    @Query("SELECT * From trip ORDER BY ID ASC")
+    @Query("SELECT * From trip")
     LiveData<List<Trip>> getAllTrip();
 }

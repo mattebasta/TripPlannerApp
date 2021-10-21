@@ -22,10 +22,26 @@ public class Shift implements Serializable {
     @ColumnInfo(name = "ShiftDate")
     private String dateOfShift;
 
-    public Shift(String departure, String arrive, String dateOfShift) {
+    @ColumnInfo(name = "LatitudeDep")
+    private Double LatitudeDep;
+
+    @ColumnInfo(name = "LongitudeDep")
+    private Double LongitudeDep;
+
+    @ColumnInfo(name = "LatitudeArr")
+    private Double LatitudeArr;
+
+    @ColumnInfo(name = "LongitudeArr")
+    private Double LongitudeArr;
+
+    public Shift(String departure, String arrive, String dateOfShift, Double LatitudeDep, Double LongitudeDep, Double LatitudeArr, Double LongitudeArr) {
         this.departure = departure;
         this.arrive = arrive;
         this.dateOfShift = dateOfShift;
+        this.LatitudeDep = LatitudeDep;
+        this.LongitudeDep = LongitudeDep;
+        this.LatitudeArr = LatitudeArr;
+        this.LongitudeArr = LongitudeArr;
     }
 
     public String getDeparture() {
@@ -60,4 +76,35 @@ public class Shift implements Serializable {
         ShiftID = shiftID;
     }
 
+    public Double getLatitudeDep() {
+        return LatitudeDep;
+    }
+
+    public void setLatitudeDep(Double latitudeDep) {
+        LatitudeDep = latitudeDep;
+    }
+
+    public Double getLongitudeDep() {
+        return LongitudeDep;
+    }
+
+    public void setLongitudeDep(Double longitudeDep) {
+        LongitudeDep = longitudeDep;
+    }
+
+    public Double getLatitudeArr() {
+        return LatitudeArr;
+    }
+
+    public void setLatitudeArr(Double latitudeArr) {
+        LatitudeArr = latitudeArr;
+    }
+
+    public Double getLongitudeArr() {
+        return LongitudeArr;
+    }
+
+    public void setLongitudeArr(Double longitudeArr) {
+        LongitudeArr = longitudeArr;
+    }
 }

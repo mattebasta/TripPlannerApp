@@ -9,6 +9,9 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import java.util.List;
 
 
@@ -33,4 +36,13 @@ public interface StayDao {
     //getAll
     @Query("SELECT * From stay ORDER BY StayID ASC")
     LiveData<List<Stay>> getAllStay();
+
+    //get Latitude and Longitude of the stay
+    @Query("SELECT StayLatitude, StayLongitude FROM Stay")
+    LiveData<List<stayCoordinates>> getStayCoordinates();
+
+     static class stayCoordinates{
+        public Double StayLatitude;
+        public Double StayLongitude;
+    }
 }

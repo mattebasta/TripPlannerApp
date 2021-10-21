@@ -10,7 +10,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Trip.class, Shift.class, Stay.class}, version = 6,exportSchema = false)
+@Database(entities = {Trip.class, Shift.class, Stay.class}, version = 12,exportSchema = false)
 public abstract class RoomDB extends RoomDatabase {
     private static RoomDB database;
 

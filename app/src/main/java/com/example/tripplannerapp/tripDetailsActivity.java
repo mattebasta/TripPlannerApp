@@ -1,5 +1,6 @@
 package com.example.tripplannerapp;
 
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -7,9 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,11 +23,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.GeoJson;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-//Todo: implement data persistance through rooms
 public class tripDetailsActivity extends AppCompatActivity {
     private StayViewModel stayViewModel;
     private ShiftViewModel shiftViewModel;
@@ -35,7 +40,6 @@ public class tripDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_TRIP_DESC = "com.example.tripplannerapp.EXTRA_TRIP_DESC";
     public static final String EXTRA_TRIP_SDATE = "com.example.tripplannerapp.EXTRA_TRIP_SDATE";
     public static final String EXTRA_TRIP_EDATE = "com.example.tripplannerapp.EXTRA_TRIP_EDATE";
-    public static final String EXTRA_TRIP_ID = "com.example.tripplannerapp.EXTRA_TRIP_ID";
 
     private TextView theTripName;
     private TextView theTripDesc;
@@ -60,8 +64,16 @@ public class tripDetailsActivity extends AppCompatActivity {
                             String departurePlace = intent.getStringExtra("Departure");
                             String arrivePlace = intent.getStringExtra("Arrive");
                             String dateOfShift = intent.getStringExtra("DateOfShift");
-                            shiftList.add(new Shift(departurePlace,arrivePlace,dateOfShift));
-                            shiftViewModel.insert(new Shift(departurePlace,arrivePlace,dateOfShift));
+                            String shiftLatDep = intent.getStringExtra("shLatDep");
+                            String shiftLngDep = intent.getStringExtra("shLngDep");
+                            String shiftLatArr = intent.getStringExtra("shLatArr");
+                            String shiftLngArr = intent.getStringExtra("shLngArr");
+                            Double shiftLatDepDouble = Double.parseDouble(shiftLatDep);
+                            Double shiftLngDepDouble = Double.parseDouble(shiftLngDep);
+                            Double shiftLatArrDouble = Double.parseDouble(shiftLatArr);
+                            Double shiftLngArrDouble = Double.parseDouble(shiftLngArr);
+                            shiftList.add(new Shift(departurePlace,arrivePlace,dateOfShift, shiftLatDepDouble, shiftLngDepDouble, shiftLatArrDouble, shiftLngArrDouble));
+                            shiftViewModel.insert(new Shift(departurePlace,arrivePlace,dateOfShift, shiftLatDepDouble, shiftLngDepDouble, shiftLatArrDouble, shiftLngArrDouble));
                         }
                     }
                 }
@@ -78,13 +90,16 @@ public class tripDetailsActivity extends AppCompatActivity {
                             String stayPlace = intent.getStringExtra("StayPlace");
                             String fromStayDate = intent.getStringExtra("StayFrom");
                             String toStayDate = intent.getStringExtra("StayTo");
-                            stayList.add(new Stay(stayPlace, fromStayDate, toStayDate));
-                            stayViewModel.insert(new Stay(stayPlace,fromStayDate,toStayDate));
+                            String stayLngString = intent.getStringExtra("StayLng");
+                            String stayLatString = intent.getStringExtra("StayLat");
+                            Double stayLngDouble = Double.parseDouble(stayLngString);
+                            Double stayLatDouble = Double.parseDouble(stayLatString);
+                            stayList.add(new Stay(stayPlace, fromStayDate, toStayDate, stayLngDouble, stayLatDouble));
+                            stayViewModel.insert(new Stay(stayPlace,fromStayDate,toStayDate, stayLngDouble, stayLatDouble));
                         }
                     }
                 }
             });
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +107,7 @@ public class tripDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //stay recyclerview management
         stayRecyclerView = findViewById(R.id.stayRecyclerView);
@@ -104,7 +120,7 @@ public class tripDetailsActivity extends AppCompatActivity {
         final tripStayAdapter stayAdapter = new tripStayAdapter();
         stayRecyclerView.setAdapter(stayAdapter);
 
-        stayViewModel = ViewModelProviders.of(this).get(StayViewModel.class);
+        stayViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(StayViewModel.class);
         stayViewModel.getAllStay().observe(this, new Observer<List<Stay>>() {
             @Override
             public void onChanged(List<Stay> stayList) {
@@ -118,7 +134,6 @@ public class tripDetailsActivity extends AppCompatActivity {
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
-
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 stayViewModel.delete(stayAdapter.getStayAt(viewHolder.getAdapterPosition()));
@@ -183,7 +198,6 @@ public class tripDetailsActivity extends AppCompatActivity {
             private void openAddNewShiftActivity() {
                 Intent shiftIntent = new Intent(tripDetailsActivity.this, AddNewShiftActivity.class);
                 GetNewShiftResultLauncher.launch(shiftIntent);
-                //startActivity(intent);
             }
         });
 
@@ -207,10 +221,9 @@ public class tripDetailsActivity extends AppCompatActivity {
             public void onClick(View v) { openMapViewActivity(); }
 
             private void openMapViewActivity(){
-                Intent mapIntent = new Intent(tripDetailsActivity.this, mapMapBoxActivity.class);
+                Intent mapIntent = new Intent(tripDetailsActivity.this, MapsActivity.class);
                 startActivity(mapIntent);
             }
         });
     }
-
 }
