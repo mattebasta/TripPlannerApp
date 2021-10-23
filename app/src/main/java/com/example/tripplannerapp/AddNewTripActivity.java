@@ -13,10 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
-//Todo: add alert to notify the completion of all field when adding a new element to a recycler view
 public class AddNewTripActivity extends AppCompatActivity {
     private DatePickerDialog startDatePickerDialog;
     private DatePickerDialog endDatePickerDialog;
@@ -49,9 +49,13 @@ public class AddNewTripActivity extends AppCompatActivity {
                 aNewTripIntent.putExtra("TripDesc", TripDesc.getText().toString());
                 aNewTripIntent.putExtra("StartDate", startDateButton.getText().toString());
                 aNewTripIntent.putExtra("EndDate", endDateButton.getText().toString());
-//                if()
-                setResult(78, aNewTripIntent);
-                AddNewTripActivity.super.onBackPressed();
+                if(TripName.getText().toString().isEmpty() || TripDesc.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Complete all field",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    setResult(78, aNewTripIntent);
+                    AddNewTripActivity.super.onBackPressed();
+                }
             }
         });
     }

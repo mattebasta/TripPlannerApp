@@ -32,7 +32,7 @@ public interface ShiftDao {
     void update(Shift shift);
 
     //getAll
-    @Query("SELECT * From shift ORDER BY ShiftID ASC")
+    @Query("SELECT * From shift ORDER BY ID ASC")
     LiveData<List<Shift>> getAllShift();
 
     //get Latitude and Longitude of the shift Departure

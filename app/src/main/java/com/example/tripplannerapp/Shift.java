@@ -1,6 +1,7 @@
 package com.example.tripplannerapp;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 public class Shift implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private int ShiftID;
+    private int ID;
 
     @ColumnInfo(name = "ShiftDeparture")
     private String departure;
@@ -68,14 +69,6 @@ public class Shift implements Serializable {
         this.dateOfShift = dateOfShift;
     }
 
-    public int getShiftID() {
-        return ShiftID;
-    }
-
-    public void setShiftID(int shiftID) {
-        ShiftID = shiftID;
-    }
-
     public Double getLatitudeDep() {
         return LatitudeDep;
     }
@@ -106,5 +99,13 @@ public class Shift implements Serializable {
 
     public void setLongitudeArr(Double longitudeArr) {
         LongitudeArr = longitudeArr;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.tripplannerapp;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 public class Stay implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private int StayID;
+    private int ID;
 
     @ColumnInfo(name = "StayPlace")
     private String stayPlace;
@@ -60,14 +61,6 @@ public class Stay implements Serializable {
         this.toDate = toDate;
     }
 
-    public int getStayID() {
-        return StayID;
-    }
-
-    public void setStayID(int stayID) {
-        StayID = stayID;
-    }
-
     public Double getStayLongitude() {
         return stayLongitude;
     }
@@ -82,5 +75,13 @@ public class Stay implements Serializable {
 
     public void setStayLatitude(Double stayLatitude) {
         this.stayLatitude = stayLatitude;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 }

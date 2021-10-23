@@ -75,9 +75,9 @@
         android:id="@+id/dateOfShift"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:layout_marginEnd="71dp"
-        android:layout_marginRight="71dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginRight="72dp"
         android:onClick="dateOfShiftOpenDatePicker"
         android:text="Shiftdate"
         app:backgroundTint="#1E88A3"
@@ -167,4 +167,13 @@
         app:layout_constraintEnd_toStartOf="@+id/shiftLngArriveTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView21" />
+
+    <TextView
+        android:id="@+id/maxShiftDateTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        tools:layout_editor_absoluteX="317dp"
+        tools:layout_editor_absoluteY="744dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

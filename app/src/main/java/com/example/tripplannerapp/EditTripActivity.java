@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -55,8 +56,12 @@ public class EditTripActivity extends AppCompatActivity {
                 changeIntent.putExtra("updateTripDesc", editTripDescET.getText().toString());
                 changeIntent.putExtra("updateTripSDate", editSDateBtn.getText().toString());
                 changeIntent.putExtra("updateTripEDate", editEDateBtn.getText().toString());
-                setResult(42, changeIntent);
-                EditTripActivity.super.onBackPressed();
+                if (editTripDescET.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Complete all field",Toast.LENGTH_SHORT).show();
+                } else {
+                    setResult(42, changeIntent);
+                    EditTripActivity.super.onBackPressed();
+                }
             }
         });
     }

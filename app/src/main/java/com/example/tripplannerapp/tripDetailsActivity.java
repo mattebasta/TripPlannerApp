@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,10 +30,14 @@ import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-
+//TODO: set title for the activity (TripDetails, New stay, New Shift)
+//TODO: set minimum calendar with the starting trip date
+//TODO: set maximum calendar with the ending trip date
 public class tripDetailsActivity extends AppCompatActivity {
     private StayViewModel stayViewModel;
     private ShiftViewModel shiftViewModel;
@@ -41,15 +46,15 @@ public class tripDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_TRIP_SDATE = "com.example.tripplannerapp.EXTRA_TRIP_SDATE";
     public static final String EXTRA_TRIP_EDATE = "com.example.tripplannerapp.EXTRA_TRIP_EDATE";
 
-    private TextView theTripName;
-    private TextView theTripDesc;
-    private TextView theTripSDate;
-    private TextView theTripEDate;
-    private Button addNewStayBtn;
-    private Button addNewShiftBtn;
-    private RecyclerView stayRecyclerView;
-    private RecyclerView shiftRecyclerView;
-    private ImageButton toMapBtn;
+    public TextView theTripName;
+    public TextView theTripDesc;
+    public TextView theTripSDate;
+    public TextView theTripEDate;
+    public Button addNewStayBtn;
+    public Button addNewShiftBtn;
+    public RecyclerView stayRecyclerView;
+    public RecyclerView shiftRecyclerView;
+    public ImageButton toMapBtn;
     List<Stay> stayList;
     List<Shift> shiftList;
 
@@ -197,6 +202,8 @@ public class tripDetailsActivity extends AppCompatActivity {
 
             private void openAddNewShiftActivity() {
                 Intent shiftIntent = new Intent(tripDetailsActivity.this, AddNewShiftActivity.class);
+                shiftIntent.putExtra("minShiftDate", theTripSDate.getText().toString());
+                shiftIntent.putExtra("maxShiftDate", theTripEDate.getText().toString());
                 GetNewShiftResultLauncher.launch(shiftIntent);
             }
         });
@@ -210,8 +217,9 @@ public class tripDetailsActivity extends AppCompatActivity {
 
             private void openAddNewStayActivity() {
                 Intent stayIntent = new Intent(tripDetailsActivity.this, AddNewStayActivity.class);
+                stayIntent.putExtra("StartDate", theTripSDate.getText().toString());
+                stayIntent.putExtra("EndDate", theTripEDate.getText().toString());
                 GetNewStayResultLauncher.launch(stayIntent);
-//                startActivity(intent);
             }
         });
 

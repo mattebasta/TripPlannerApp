@@ -15,14 +15,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 
-//Todo: add alert to notify the completion of all field when adding a new element to a recycler view
 public class AddNewStayActivity extends AppCompatActivity {
     private DatePickerDialog fromDatePickerDialog;
     private DatePickerDialog toDatePickerDialog;
@@ -34,22 +38,26 @@ public class AddNewStayActivity extends AppCompatActivity {
     EditText editTextStayPlace;
     int REQUEST_STAY_AUTOCOMPLETE = 1;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_stay);
 
-        initDatePicker();
+        Bundle extras = getIntent().getExtras();
+        String StartDate = extras.getString("StartDate");
+        String EndDate = extras.getString("EndDate");
+
         StayLngTextView = findViewById(R.id.StayLngTextView);
         StayLatTextView = findViewById(R.id.StayLatTextView);
         editTextStayPlace = findViewById(R.id.editTextStayPlace);
         stayFromBtn = findViewById(R.id.stayFromButton);
         stayToBtn = findViewById(R.id.stayToButton);
         saveNewStayBtn = findViewById(R.id.saveNewStayButton);
-        stayFromBtn.setText(getTodayDate());
-        stayToBtn.setText(getTodayDate());
+
+        stayFromBtn.setText(StartDate);
+        stayToBtn.setText(EndDate);
+
+        initDatePicker();
 
         editTextStayPlace.setInputType(InputType.TYPE_NULL);
         editTextStayPlace.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +70,6 @@ public class AddNewStayActivity extends AppCompatActivity {
             }
         });
 
-
         saveNewStayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,11 +79,15 @@ public class AddNewStayActivity extends AppCompatActivity {
                 addNewStayIntent.putExtra("StayTo", stayToBtn.getText().toString());
                 addNewStayIntent.putExtra("StayLng", StayLngTextView.getText());
                 addNewStayIntent.putExtra("StayLat", StayLatTextView.getText());
-                setResult(80, addNewStayIntent);
-                AddNewStayActivity.super.onBackPressed();
+                if(editTextStayPlace.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Complete all field", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    setResult(80, addNewStayIntent);
+                    AddNewStayActivity.super.onBackPressed();
+                }
             }
         });
-
     }
 
     @Override
@@ -87,22 +98,11 @@ public class AddNewStayActivity extends AppCompatActivity {
             double stayLng = feature.center().longitude();
             double stayLat = feature.center().latitude();
 
-//            Log.d("TAG____", "onActivityResult: " + PlaceAutocomplete.getPlace(data).center() + "Lat: " + stayLat + "Lng: " + stayLng);
             editTextStayPlace.setText(feature.text());
             StayLngTextView.setText(Double.toString(stayLng));
             StayLatTextView.setText(Double.toString(stayLat));
 
         }
-
-    }
-
-    private String getTodayDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        month = month + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        return makeDateString(day, month, year);
     }
 
     private void initDatePicker() {
@@ -124,18 +124,29 @@ public class AddNewStayActivity extends AppCompatActivity {
             }
         };
 
-
-
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int style = AlertDialog.THEME_HOLO_DARK;
 
-        fromDatePickerDialog = new DatePickerDialog(this, style, fromDateSetListener, year, month, day);
-        fromDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
-        toDatePickerDialog = new DatePickerDialog(this, style, toDateSetListener, year, month, day);
-        toDatePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+        String fromDate = stayFromBtn.getText().toString();
+        String toDate = stayToBtn.getText().toString();
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd yyyy");
+        try {
+            Date fromDateParse = format.parse(fromDate);
+            Date toDateParse = format.parse(toDate);
+            long fromDateLong = fromDateParse.getTime();
+            long toDateLong = toDateParse.getTime();
+            fromDatePickerDialog = new DatePickerDialog(this, style, fromDateSetListener, year, month, day);
+            fromDatePickerDialog.getDatePicker().setMinDate(fromDateLong);
+            toDatePickerDialog = new DatePickerDialog(this, style, toDateSetListener, year, month, day);
+            toDatePickerDialog.getDatePicker().setMinDate(fromDateLong);
+            toDatePickerDialog.getDatePicker().setMaxDate(toDateLong);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -173,5 +184,4 @@ public class AddNewStayActivity extends AppCompatActivity {
 
     public void fromStayOpenDatePicker(View view){ fromDatePickerDialog.show(); }
     public void toStayOpenDatePicker(View view){ toDatePickerDialog.show(); }
-
 }

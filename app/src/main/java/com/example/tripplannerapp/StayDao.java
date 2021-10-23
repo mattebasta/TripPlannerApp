@@ -34,7 +34,7 @@ public interface StayDao {
     void update(Stay stay);
 
     //getAll
-    @Query("SELECT * From stay ORDER BY StayID ASC")
+    @Query("SELECT * From stay ORDER BY ID ASC ")
     LiveData<List<Stay>> getAllStay();
 
     //get Latitude and Longitude of the stay

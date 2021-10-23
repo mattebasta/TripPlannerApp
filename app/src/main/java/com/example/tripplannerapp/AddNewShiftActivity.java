@@ -21,9 +21,11 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
-//Todo: add alert to notify the completion of all field when adding a new element to a recycler view
 public class AddNewShiftActivity extends AppCompatActivity {
     private DatePickerDialog dateOfShiftPickerDialog;
     EditText editTextDeparture;
@@ -32,6 +34,7 @@ public class AddNewShiftActivity extends AppCompatActivity {
     TextView shLatDepTV;
     TextView shLngArrTV;
     TextView shLatArrTV;
+    TextView maxShiftDate;
     private Button shiftDateBtn;
     private Button newShiftBtn;
     int REQUEST_ARRIVE_AUTO_COMPLETE = 2; //arrive
@@ -42,16 +45,23 @@ public class AddNewShiftActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_shift);
 
-        initDatePicker();
+        Bundle extras = getIntent().getExtras();
+        String minShiftDate = extras.getString("minShiftDate");
+        String maxshiftDate = extras.getString("maxShiftDate");
+
         shLngDepTV = findViewById(R.id.shiftLngDepartureTV);
         shLatDepTV = findViewById(R.id.shiftLatDepartureTV);
         shLngArrTV = findViewById(R.id.shiftLngArriveTV);
         shLatArrTV = findViewById(R.id.shiftLatArriveTV);
+        maxShiftDate = findViewById(R.id.maxShiftDateTV);
         editTextArrive = findViewById(R.id.editTextArrive);
         editTextDeparture = findViewById(R.id.editTextDeparture);
         shiftDateBtn = findViewById(R.id.dateOfShift);
-        shiftDateBtn.setText(getTodayDate());
+        shiftDateBtn.setText(minShiftDate);
+        maxShiftDate.setText(maxshiftDate);
         newShiftBtn = findViewById(R.id.saveNewShiftButton);
+
+        initDatePicker();
 
         editTextDeparture.setInputType(InputType.TYPE_NULL);
         editTextArrive.setInputType(InputType.TYPE_NULL);
@@ -72,7 +82,7 @@ public class AddNewShiftActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent arrSelectionIntent = new PlaceAutocomplete.IntentBuilder()
                         .accessToken(getString(R.string.access_token))
-                        .placeOptions(PlaceOptions.builder().build()).build(AddNewShiftActivity.this);
+                        .placeOptions(PlaceOptions.builder().backgroundColor(Color.parseColor("#ffffff")).build()).build(AddNewShiftActivity.this);
                 startActivityForResult(arrSelectionIntent, REQUEST_ARRIVE_AUTO_COMPLETE);
             }
         });
@@ -88,8 +98,13 @@ public class AddNewShiftActivity extends AppCompatActivity {
                 addNewShiftIntent.putExtra("shLngDep", shLngDepTV.getText());
                 addNewShiftIntent.putExtra("shLatArr", shLatArrTV.getText());
                 addNewShiftIntent.putExtra("shLngArr", shLngArrTV.getText());
-                setResult(79,addNewShiftIntent);
-                AddNewShiftActivity.super.onBackPressed();
+                if (editTextDeparture.getText().toString().isEmpty() || editTextArrive.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Complete all field",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    setResult(79,addNewShiftIntent);
+                    AddNewShiftActivity.super.onBackPressed();
+                }
             }
         });
 
@@ -143,8 +158,20 @@ public class AddNewShiftActivity extends AppCompatActivity {
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int style = AlertDialog.THEME_HOLO_DARK;
 
-        dateOfShiftPickerDialog = new DatePickerDialog(this, style, dateOfShiftListener, year, month, day);
-        dateOfShiftPickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+        String shiftminimumDate = shiftDateBtn.getText().toString();
+        String shiftmaximumDate = maxShiftDate.getText().toString();
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd yyyy");
+        try {
+            Date minDateParse = format.parse(shiftminimumDate);
+            Date maxDateParse = format.parse(shiftmaximumDate);
+            long minDateLong = minDateParse.getTime();
+            long maxDateLong = maxDateParse.getTime();
+            dateOfShiftPickerDialog = new DatePickerDialog(this, style, dateOfShiftListener, year, month, day);
+            dateOfShiftPickerDialog.getDatePicker().setMinDate(minDateLong);
+            dateOfShiftPickerDialog.getDatePicker().setMaxDate(maxDateLong);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private String makeDateString(int day, int month, int year){
