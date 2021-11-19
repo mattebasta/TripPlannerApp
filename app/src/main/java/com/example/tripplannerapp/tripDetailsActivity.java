@@ -35,9 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//TODO: set title for the activity (TripDetails, New stay, New Shift)
-//TODO: set minimum calendar with the starting trip date
-//TODO: set maximum calendar with the ending trip date
+
 public class tripDetailsActivity extends AppCompatActivity {
     private StayViewModel stayViewModel;
     private ShiftViewModel shiftViewModel;

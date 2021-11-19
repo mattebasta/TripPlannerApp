@@ -27,8 +27,6 @@ import java.util.List;
 
 
 
-//TODO: collega le tabelle con una query in modo da far vedere gli stage nel rispettivo viaggio
-
 public class MainActivity extends AppCompatActivity{
     private TripViewModel tripViewModel;
     private Button addNewTripBtn;
