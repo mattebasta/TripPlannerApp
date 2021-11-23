@@ -89,7 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        // Add a marker in Sydney and move the camera
+        //center map on italy
         LatLng rome = new LatLng(41.890373, 12.490733);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(rome));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(5));
